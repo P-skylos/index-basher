@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+db=1
+err() {
+	if (($db)); then
+		echo $1 1>&2 
+		fi
+	}
+
+path_prefix=""
+
+
+#default config
+card_preamble=""
+card_postamble=""
+doc_preamble="<!doctype html><head><title>my cool site</title></head><body>"
+doc_postamble="</body>"
+ignore=""
+protected="false"
+
+fetch_config(){
+	local found=$(awk "/\["${1}"\]/,/\[end\]/" .config) #pull the block with reges
+	if [[ $found != "" ]]; then
+		echo "${found}" | sed -e "s/\[.*\]//g" #if the block exists truncate the delimeters
+	else
+		echo $2 #if the block doesnt exist give the default value provided
+	fi
+}
+
+make_card(){
+	echo "$card_preamble"
+	echo "<a class="card_link" href="${1}${2}"> ${2} </a>"
+	echo "$card_postamble"
+}
+
+make_index(){
+	echo "$doc_preamble" > index.html
+	for file in $(ls -p); do
+		make_card "$path_prefix" "$file" >> index.html
+	done
+	echo "$doc_postamble" >> index.html
+}
+
+crawl(){
+	#check config
+	if test -f ".config"; then #if theres no set config it'll just scope up
+		echo "load config"	1>&2
+
+		#if unconfigured inherit from parent config
+		local card_preamble="$(fetch_config card_preamble $card_preamble)"
+		local card_postamble="$(fetch_config card_postamble $card_postamble)"
+		local doc_preamble="$(fetch_config doc_preamble $doc_preamble)"
+		local doc_postamble="$(fetch_config doc_postamble $doc_postamble)"
+		local ignore="$(fetch_config ignore $ignore)"
+		local protected="$(fetch_config protected false)"#default to unprotected
+  
+	fi
+
+	make_index
+
+	for dir in $(ls -d */); do
+		old_path="$path_prefix"
+		path_prefix="$path_prefix$dir"
+		cd $dir
+		crawl
+		cd ..
+		path_prefix="$old_path"
+	done
+}
+crawl
