@@ -12,7 +12,7 @@ path_prefix=""
 
 #default config
 card_preamble=""
-card_postamble=""
+card_postamble="</br>"
 doc_preamble="<!doctype html><head><title>my cool site</title></head><body>"
 doc_postamble="</body>"
 ignore=""
