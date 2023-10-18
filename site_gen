@@ -29,14 +29,14 @@ fetch_config(){
 
 make_card(){
 	echo "$card_preamble"
-	echo "<a class="card_link" href="${1}${2}"> ${2} </a>"
+	echo "<a class="card_link" href="${1}"> ${1} </a>"
 	echo "$card_postamble"
 }
 
 make_index(){
 	echo "$doc_preamble" > index.html
 	for file in $(ls -p); do
-		make_card "$path_prefix" "$file" >> index.html
+		make_card "$file" >> index.html
 	done
 	echo "$doc_postamble" >> index.html
 }
