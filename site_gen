@@ -52,13 +52,13 @@ crawl(){
 		local doc_postamble="$(fetch_config doc_postamble "$doc_postamble")"
 		local ignore="$(fetch_config ignore $ignore)"
 		ignore=$(echo "$ignore" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
-		local protected="$(fetch_config protected false)"#default to unprotected
-
+		local protected="$(fetch_config protected false)" #default to unprotected
 	fi
 
 	files=($(ls -p | grep -vF "$ignore"))
-
-	make_index
+	if [[ "$protected" = "false" ]]; then
+		make_index
+	fi
 
 	for dir in $(ls -d */ | grep -vF "$ignore"); do
 		old_path="$path_prefix"
