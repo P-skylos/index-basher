@@ -46,10 +46,10 @@ crawl(){
 	if test -f ".config"; then #if theres no set config it'll just scope up
 
 		#if unconfigured inherit from parent config
-		local card_preamble="$(fetch_config card_preamble $card_preamble)"
-		local card_postamble="$(fetch_config card_postamble $card_postamble)"
-		local doc_preamble="$(fetch_config doc_preamble $doc_preamble)"
-		local doc_postamble="$(fetch_config doc_postamble $doc_postamble)"
+		local card_preamble="$(fetch_config card_preamble "$card_preamble")"
+		local card_postamble="$(fetch_config card_postamble "$card_postamble")"
+		local doc_preamble="$(fetch_config doc_preamble "$doc_preamble")"
+		local doc_postamble="$(fetch_config doc_postamble "$doc_postamble")"
 		local ignore="$(fetch_config ignore $ignore)"
 		ignore=$(echo "$ignore" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
 		local protected="$(fetch_config protected false)"#default to unprotected
