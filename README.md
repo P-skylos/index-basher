@@ -17,5 +17,4 @@ The options you have access to are:
 - \[protected\] the protected option will prevent the existing index.html from being overwritten.
 
 # not yet implemented
-- index protection
 - would like to expose some variables to config
