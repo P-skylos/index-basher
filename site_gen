@@ -3,7 +3,7 @@
 db=1
 err() {
 	if (($db)); then
-		echo $1 1>&2 
+		printf "$1" 1>&2
 		fi
 	}
 
@@ -19,7 +19,7 @@ ignore=""
 protected="false"
 
 fetch_config(){
-	local found=$(awk "/\["${1}"\]/,/\[end\]/" .config) #pull the block with reges
+	local found=$(awk "/\["$1"\]/,/\[end\]/" .config) #pull the block with regex
 	if [[ $found != "" ]]; then
 		echo "${found}" | sed -e "s/\[.*\]//g" #if the block exists truncate the delimeters
 	else
@@ -35,7 +35,7 @@ make_card(){
 
 make_index(){
 	echo "$doc_preamble" > index.html
-	for file in $(ls -p); do
+	for file in "${files[@]}"; do
 		make_card "$file" >> index.html
 	done
 	echo "$doc_postamble" >> index.html
@@ -44,7 +44,6 @@ make_index(){
 crawl(){
 	#check config
 	if test -f ".config"; then #if theres no set config it'll just scope up
-		echo "load config"	1>&2
 
 		#if unconfigured inherit from parent config
 		local card_preamble="$(fetch_config card_preamble $card_preamble)"
@@ -52,13 +51,16 @@ crawl(){
 		local doc_preamble="$(fetch_config doc_preamble $doc_preamble)"
 		local doc_postamble="$(fetch_config doc_postamble $doc_postamble)"
 		local ignore="$(fetch_config ignore $ignore)"
+		ignore=$(echo "$ignore" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
 		local protected="$(fetch_config protected false)"#default to unprotected
-  
+
 	fi
+
+	files=($(ls -p | grep -vF "$ignore"))
 
 	make_index
 
-	for dir in $(ls -d */); do
+	for dir in $(ls -d */ | grep -vF "$ignore"); do
 		old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
 		cd $dir
