@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-db=1
+
+db=0
 err() {
-	if (($db)); then
+	if (( $db )); then
 		printf "$1" 1>&2
 		fi
 	}
@@ -15,7 +16,7 @@ card_preamble=""
 card_postamble="</br>"
 doc_preamble="<!doctype html><head><title>my cool site</title></head><body>"
 doc_postamble="</body>"
-ignore=""
+ignore="index.html"
 protected="false"
 
 fetch_config(){
@@ -42,20 +43,22 @@ make_index(){
 }
 
 crawl(){
+	err "crawl $PWD"
 	#check config
 	if test -f ".config"; then #if theres no set config it'll just scope up
-
+		err "load config\n"
 		#if unconfigured inherit from parent config
 		local card_preamble="$(fetch_config card_preamble "$card_preamble")"
 		local card_postamble="$(fetch_config card_postamble "$card_postamble")"
 		local doc_preamble="$(fetch_config doc_preamble "$doc_preamble")"
 		local doc_postamble="$(fetch_config doc_postamble "$doc_postamble")"
-		local ignore="$(fetch_config ignore $ignore)"
+		local ignore="$(fetch_config ignore "$ignore")"
 		ignore=$(echo "$ignore" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
 		local protected="$(fetch_config protected false)" #default to unprotected
 	fi
 
-	files=($(ls -p | grep -vF "$ignore"))
+	files=($(ls -p | grep -vF "${ignore:-"\^\$"}"))
+	err "detected: \n$files"
 	if [[ "$protected" = "false" ]]; then
 		make_index
 	fi
@@ -64,10 +67,15 @@ crawl(){
 		old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
 		cd $dir
-		crawl
+		crawl .
 		cd ..
 		path_prefix="$old_path"
 	done
 }
-cd "$1"
-crawl
+
+if [[ $1 = "" ]]; then
+	echo "hey you gotta give me a directory"
+else
+	cd $1
+	crawl
+fi
