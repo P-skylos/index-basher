@@ -27,3 +27,4 @@ The options you have access to are:
 - data sanitization so that variables don't break everything
 - space substitution for file names
 - remake in separate directory
+- invert ignore list
