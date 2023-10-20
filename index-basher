@@ -77,6 +77,7 @@ crawl(){
 
 if [[ $1 = "" ]]; then
 	echo "hey you gotta give me a directory"
+	return 1
 else
 	cd $1
 	crawl
