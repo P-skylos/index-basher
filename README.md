@@ -28,6 +28,8 @@ The options you have access to are:
  - current file for cards
  - time
  - nesting level
+ - file creation date
+ - file update date
 - data sanitization so that variables don't break everything
 - space substitution for file names
 - remake in separate directory
