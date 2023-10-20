@@ -24,7 +24,12 @@ The options you have access to are:
 
 # not yet implemented
 - would like to expose some variables to config
+ - current directory
+ - current file for cards
+ - time
+ - nesting level
 - data sanitization so that variables don't break everything
 - space substitution for file names
 - remake in separate directory
 - invert ignore list
+- hide file extensions
