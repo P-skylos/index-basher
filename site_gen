@@ -69,4 +69,5 @@ crawl(){
 		path_prefix="$old_path"
 	done
 }
+cd "$1"
 crawl
