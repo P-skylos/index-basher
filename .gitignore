@@ -1,0 +1,6 @@
+
+test-directory/fully-inherit-roots-config/index.html
+test-directory/fully-inherit-roots-config/full-inherit-on-empty-config/index.html
+test-directory/index.html
+test-directory/partially-inherit-roots-config/index.html
+test-directory/partially-inherit-roots-config/fully-break-inheritance/index.html
