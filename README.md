@@ -13,14 +13,14 @@ index-basher [dir]
 ```
 
 # .config
-a .config file consists of a series of named blocks containing the needed information. a block consists of `\[\<name>\] \<text> \[end\].
+a .config file consists of a series of named blocks containing the needed information. a block consists of `\[\<name>\] \<text> \[end\]`.
 The options you have access to are:
-- \[doc_preamble\] houses everything that comes before the link list, including the \<head>\</head> and opening \<body> tag.
-- \[doc_postamble\] houses the closing \</body> tag and anything you would like to put before it
-- \[card_preamble\] allows you to wrap links in extra decoration
-- \[card_postamble\] allows you to wrap links in extra decoration
-- \[ignore\] houses a list of files to ignore
-- \[protected\] the protected option will prevent the existing index.html from being overwritten.
+- `\[doc_preamble\]` houses everything that comes before the link list, including the \<head>\</head> and opening \<body> tag.
+- `\[doc_postamble\]` houses the closing \</body> tag and anything you would like to put before it
+- `\[card_preamble\]` allows you to wrap links in extra decoration
+- `\[card_postamble\]` allows you to wrap links in extra decoration
+- `\[ignore\]` houses a list of files to ignore
+- `\[protected\]` the protected option will prevent the existing index.html from being overwritten.
 
 # not yet implemented
 - would like to expose some variables to config
