@@ -64,20 +64,22 @@ crawl(){
 		err "making index\n"
 		make_index
 	fi
-	err $(ls -d */ | grep -vF "$ignore")
-	for dir in $(ls -d "*/" 2>/dev/null| grep -vF "$ignore"); do
+	err "continue to $(ls -d */ 2>/dev/null| grep -vF "$ignore")\n"
+	for dir in $(ls -d */ 2>/dev/null| grep -vF "$ignore"); do
 		old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
 		cd $dir
-		crawl .
+		err "recursing to $dir"
+		crawl "."
 		cd ..
 		path_prefix="$old_path"
 	done
+	err "bye\n"
 }
 
 if [[ $1 = "" ]]; then
 	echo "hey you gotta give me a directory"
-	return 1
+	exit 1
 else
 	cd $1
 	crawl
