@@ -24,7 +24,8 @@ fetch_config(){
 	if [[ $found != "" ]]; then
 		echo "${found}" | sed -e "s/\[.*\]//g" #if the block exists truncate the delimeters
 	else
-		echo $2 #if the block doesnt exist give the default value provided
+		err "defaulting $1 to $2\n"
+		echo "$2" #if the block doesnt exist give the default value provided
 	fi
 }
 
@@ -35,35 +36,36 @@ make_card(){
 }
 
 make_index(){
-	echo "$doc_preamble" > index.html
+	echo "$doc_preamble" > "index.html"
 	for file in "${files[@]}"; do
-		make_card "$file" >> index.html
+		make_card "$file" >> "index.html"
 	done
-	echo "$doc_postamble" >> index.html
+	echo "$doc_postamble" >> "index.html"
 }
 
 crawl(){
-	err "crawl $PWD"
+	err "crawl $PWD\n"
 	#check config
 	if test -f ".config"; then #if theres no set config it'll just scope up
 		err "load config\n"
 		#if unconfigured inherit from parent config
-		local card_preamble="$(fetch_config card_preamble "$card_preamble")"
-		local card_postamble="$(fetch_config card_postamble "$card_postamble")"
-		local doc_preamble="$(fetch_config doc_preamble "$doc_preamble")"
-		local doc_postamble="$(fetch_config doc_postamble "$doc_postamble")"
-		local ignore="$(fetch_config ignore "$ignore")"
-		ignore=$(echo "$ignore" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
-		local protected="$(fetch_config protected false)" #default to unprotected
+		local card_preamble="$(fetch_config "card_preamble" "$card_preamble")"
+		local card_postamble="$(fetch_config "card_postamble" "$card_postamble")"
+		local doc_preamble="$(fetch_config "doc_preamble" "$doc_preamble")"
+		local doc_postamble="$(fetch_config "doc_postamble" "$doc_postamble")"
+		local ignore="$(fetch_config "ignore" "$ignore")"
+		ignore=$(echo "${ignore:-^\$}" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
+		local protected="$(fetch_config "protected" "false")" #default to unprotected
 	fi
-
-	files=($(ls -p | grep -vF "${ignore:-"\^\$"}"))
-	err "detected: \n$files"
+	err "ignoring: $ignore\n"
+	files=($(ls -p | grep -vF "$ignore"))
+	err "detected: ${#files[@]}\n"
 	if [[ "$protected" = "false" ]]; then
+		err "making index\n"
 		make_index
 	fi
-
-	for dir in $(ls -d */ | grep -vF "$ignore"); do
+	err $(ls -d */ | grep -vF "$ignore")
+	for dir in $(ls -d "*/" 2>/dev/null| grep -vF "$ignore"); do
 		old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
 		cd $dir
