@@ -73,7 +73,7 @@ load_config_and_build(){
 
 	#get files and apply ignore
 	err "ignoring: $ignore\n"
-	local files=$(ls -p | grep -vF -- "$ignore")
+	local files=($(ls -p | grep -vF -- "$ignore"))
 	err "detected: ${#files[@]}\n"
 	if [[ "$protected" = "false" ]]; then
 		err "making index\n"
