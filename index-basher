@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-db=0
+db=1
 err() {
 	if (( $db )); then
 		printf "$1" 1>&2
@@ -22,7 +22,7 @@ protected="false"
 fetch_config(){
 	local found=$(awk "/\["$1"\]/,/\[end\]/" .config) #pull the block with regex
 	if [[ $found != "" ]]; then
-		echo "${found}" | sed -e "s/\[.*\]//g" #if the block exists truncate the delimeters
+		echo "${found}" | sed -e "s/^\[.*\]//" -e "s/\[end\]//" -e "s/[\\\.*]//" #if the block exists truncate the delimeters, escape remove \ used for escape
 	else
 		err "defaulting $1 to $2\n"
 		echo "$2" #if the block doesnt exist give the default value provided
