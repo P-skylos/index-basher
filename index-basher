@@ -28,6 +28,8 @@ fetch_config(){
 		echo "$2" #if the block doesnt exist give the default value provided
 	fi
 }
+###
+#HTML generation
 
 make_card(){
 	echo "$card_preamble"
@@ -43,9 +45,12 @@ make_index(){
 	echo "$doc_postamble" >> "index.html"
 }
 
-crawl(){
-	err "crawl $PWD\n"
-	#check config
+###
+#recursive step
+
+load_config_and_build(){
+	err "load in $PWD\n"
+	#load config
 	if test -f ".config"; then #if theres no set config it'll just scope up
 		err "load config\n"
 		#if unconfigured inherit from parent config
@@ -57,6 +62,8 @@ crawl(){
 		ignore=$(echo "${ignore:-^\$}" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
 		local protected="$(fetch_config "protected" "false")" #default to unprotected
 	fi
+
+	#apply config
 	err "ignoring: $ignore\n"
 	files=($(ls -p | grep -vF -- "$ignore"))
 	err "detected: ${#files[@]}\n"
@@ -64,23 +71,35 @@ crawl(){
 		err "making index\n"
 		make_index
 	fi
+}
+
+###
+#recursion
+
+recurse() {
+
+	load_config_and_build
+
 	err "continue to $(ls -d */ 2>/dev/null| grep -vF -- "$ignore")\n"
 	for dir in $(ls -d */ 2>/dev/null| grep -vF -- "$ignore"); do
 		old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
 		cd $dir
 		err "recursing to $dir"
-		crawl "."
+		recurse
 		cd ..
 		path_prefix="$old_path"
 	done
-	err "bye\n"
 }
+
+###
+#execution
 
 if [[ $1 = "" ]]; then
 	echo "hey you gotta give me a directory"
 	exit 1
 else
 	cd $1
-	crawl
+	recurse
+	err "bye\n"
 fi
