@@ -29,6 +29,5 @@ The options you have access to are:
  - nesting level
  - file creation date
  - file update date
-- data sanitization
 - option to whitelist instead of ignore
 - hide file extensions / or pattern replacement on variables
