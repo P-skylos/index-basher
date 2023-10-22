@@ -58,14 +58,22 @@ load_config_and_build(){
 		local card_postamble="$(fetch_config "card_postamble" "$card_postamble")"
 		local doc_preamble="$(fetch_config "doc_preamble" "$doc_preamble")"
 		local doc_postamble="$(fetch_config "doc_postamble" "$doc_postamble")"
+		local protected="$(fetch_config "protected" "false")" #default to unprotected
 		local ignore="$(fetch_config "ignore" "$ignore")"
 		ignore=$(echo "${ignore:-^\$}" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
-		local protected="$(fetch_config "protected" "false")" #default to unprotected
 	fi
 
-	#apply config
+	#check for spaces in file/directory names
+	spaces=$(ls | awk "/ /")
+	err "space detection $spaces \n"
+	if [[ $spaces != "" ]]; then
+		echo "the following file(s) have spaces in the name, rename them and try again: ${spaces}"
+		exit 1
+	fi
+
+	#get files and apply ignore
 	err "ignoring: $ignore\n"
-	files=($(ls -p | grep -vF -- "$ignore"))
+	local files=$(ls -p | grep -vF -- "$ignore")
 	err "detected: ${#files[@]}\n"
 	if [[ "$protected" = "false" ]]; then
 		err "making index\n"
