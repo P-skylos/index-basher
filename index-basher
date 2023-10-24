@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-db=1
+db=0
 err() {
 	if (( $db )); then
 		printf "$1" 1>&2
@@ -22,7 +22,8 @@ protected="false"
 fetch_config(){
 	local found=$(awk "/\["$1"\]/,/\[end\]/" .config) #pull the block with regex
 	if [[ $found != "" ]]; then
-		echo "${found}" | sed -e "s/^\[.*\]//" -e "s/\[end\]//" -e "s/[\\\.*]//" #if the block exists truncate the delimeters, escape remove \ used for escape
+		err "looking for $1 found ${found}"
+		echo "${found}" | sed -e "s/^\[.*\]//" -e "s/\[end\]//" -e "s/\[\\\.*\]//" #if the block exists truncate the delimeters, escape remove \ used for escape
 	else
 		err "defaulting $1 to $2\n"
 		echo "$2" #if the block doesnt exist give the default value provided
@@ -32,9 +33,9 @@ fetch_config(){
 #HTML generation
 
 make_card(){
-	echo "$card_preamble"
+	echo "${card_preamble}"
 	echo "<a class="card_link" href="${1}"> ${1} </a>"
-	echo "$card_postamble"
+	echo "${card_postamble}"
 }
 
 make_index(){
