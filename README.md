@@ -1,7 +1,7 @@
 # index basher
 This is an incredibly basic static site generator written in bash. It crawls the working directory and recursively generates an index.html file for each directory. How the html file looks can be configured in a .config file. The html consists of a preamble, a list of links (called cards) to all files and child directories in the directory, and a postamble.
 
-Despite its very limited functionality, you may want to use this tool if you desire a site generator with minimal overhead. The only additional files it creates are an index.html file in each directory it crawls, and it only makes use of a single optional .config file in each directory. This is great if, for example, you have a directory full of pictures you would like to simply upload to a site so you have something to link your friends to. I made a small site <grandmas-cabin.neocities.org> to demonstrate this sort of use case.
+Despite its very limited functionality, you may want to use this tool if you desire a site generator with minimal overhead. The only additional files it creates are an index.html file in each directory it crawls, and it only makes use of a single optional .config file in each directory. This is great if, for example, you have a directory full of pictures you would like to simply upload to a site so you have something to link your friends to. I made a small site <http://grandmas-cabin.neocities.org> to demonstrate this sort of use case.
 
 This project makes use of the following utils:
 - sed
