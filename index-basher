@@ -20,10 +20,11 @@ ignore="index.html"
 protected="false"
 
 fetch_config(){
-	local found=$(awk "/\["$1"\]/,/\[end\]/" .config) #pull the block with regex
-	if [[ $found != "" ]]; then
-		err "looking for $1 found ${found}"
-		echo "${found}" | sed -e "s/^\[.*\]//" -e "s/\[end\]//" -e "s/\[\\\.*\]//" #if the block exists truncate the delimeters, escape remove \ used for escape
+	local block=$(awk "/\["$1"\]/,/\[end\]/" .config) #pull the block with regex
+	if [[ $block != "" ]]; then
+		err "looking for $1 found ${block}"
+		echo "${block}" | sed -e "s/^\[.*\]//" -e "s/\[end\]//" -e "s/\[\\\.*\]//"
+		#if the block exists truncate the delimeters, remove \ used for escaping [\end] or [\name]
 	else
 		err "defaulting $1 to $2\n"
 		echo "$2" #if the block doesnt exist give the default value provided
@@ -68,7 +69,8 @@ load_config_and_build(){
 	spaces=$(ls | awk "/ /")
 	err "space detection $spaces \n"
 	if [[ $spaces != "" ]]; then
-		echo "the following file(s) have spaces in the name, rename them and try again: ${spaces}"
+		echo "the following file(s) have spaces in the name, rename them and try again:
+	${spaces}"
 		exit 1
 	fi
 
