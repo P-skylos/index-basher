@@ -5,3 +5,4 @@ test-directory/fully-inherit-roots-config/full-inherit-on-empty-config/index.htm
 test-directory/index.html
 test-directory/partially-inherit-roots-config/index.html
 test-directory/partially-inherit-roots-config/fully-break-inheritance/index.html
+test-var-subbing/index.html
