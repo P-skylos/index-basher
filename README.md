@@ -1,7 +1,9 @@
 # index basher
-This is an incredibly basic static site generator written in bash. It crawls the working directory and recursively generates an index.html file for each directory. How the html file looks can be configured in a .config file. The html consists of a preamble, a list of links to all files and child directories in the directory, and a postamble.
+This is an incredibly basic static site generator written in bash. It crawls the working directory and recursively generates an index.html file for each directory. How the html file looks can be configured in a .config file. The html consists of a preamble, a list of links (called cards) to all files and child directories in the directory, and a postamble.
 
-This project makes use of:
+Despite its very limited functionality, you may want to use this tool if you desire a site generator with minimal overhead. The only additional files it creates are an index.html file in each directory it crawls, and it only makes use of a single optional .config file in each directory.
+
+This project makes use of the following utils:
 - sed
 - awk
 - ls
@@ -13,7 +15,9 @@ index-basher [dir]
 ```
 
 # .config
-a .config file consists of a series of named blocks containing the needed information. a block consists of `[<name>] <text> [end]`.
+a .config file consists of a series of named blocks that index-basher will pull data from. If a .config file does not exist or a specific section inside a config isn't used, index-basher will inherit configuration from the parent directory or use the default configuration if the user never set the variable.
+
+a block consists of `[<name>] <text> [end]`.
 The options you have access to are:
 - `[doc_preamble]` houses everything that comes before the link list, including the \<head>\</head> and opening \<body> tag.
 - `[doc_postamble]` houses the closing \</body> tag and anything you would like to put before it
@@ -29,8 +33,9 @@ you may also access the following variables inside your html blocks
 - `{{path}}` gives the path to the current directory
 - `{{file}}` **only works within cards** and gives the current file name **if used outside it a card it will not be substituted**
 
-# not yet implemented
+# wishlist
 - would like to expose some variables to config
  - file date
 - option to whitelist instead of ignore
 - fail on bad substitution
+- refactor for speed and readability
