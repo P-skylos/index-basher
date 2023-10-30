@@ -15,7 +15,7 @@ index-basher [dir]
 ```
 
 # .config
-a .config file consists of a series of named blocks that index-basher will pull data from. If a .config file does not exist or a specific section inside a config isn't used, index-basher will inherit configuration from the parent directory or use the default configuration if the user never set the variable.
+a .config file consists of a series of named blocks that index-basher will pull data from. If a .config file does not exist or a specific section inside a config isn't used, index-basher will inherit configuration from the parent directory or use the default configuration if the user never set the variable, Except for protected status and the ignore list, since these are things that will likely change on a case by case basis.
 
 a block consists of `[<name>] <text> [end]`.
 The options you have access to are:
