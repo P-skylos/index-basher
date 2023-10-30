@@ -33,7 +33,7 @@ fetch_config(){
 }
 
 fill_template(){ #text #pattern #replacement
-	echo "${1}" | sed -e "s/{{$2}}/$3/g" -e "s/{{\\\\$2}}/{{$2}}/g"
+	echo "${1}" | sed -e "s/{{"$2"}}/"${3//\//\\\/}"/g" -e "s/{{\\\\"$2"}}/{{"$2"}}/g"
 }
 
 fill_body_templates(){ #1=text
