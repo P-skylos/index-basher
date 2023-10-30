@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-db=1
+db=0
 err() {
 	if (( $db )); then
 		printf "$1" 1>&2
