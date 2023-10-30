@@ -60,19 +60,7 @@ make_index(){
 ###
 #recursive step
 
-load_config_and_build(){
-	err "load in $PWD\n"
-	#load config
-	if test -f ".config"; then #if theres no set config it'll just scope up
-		err "load config\n"
-		#if unconfigured inherit from parent config
-		local card="$(fetch_config "card" "$card")"
-		local doc_preamble="$(fetch_config "doc_preamble" "$doc_preamble")"
-		local doc_postamble="$(fetch_config "doc_postamble" "$doc_postamble")"
-		local protected="$(fetch_config "protected" "false")" #default to unprotected
-		local ignore="$(fetch_config "ignore" "$ignore")"
-		ignore=$(echo "${ignore:-^\$}" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
-	fi
+build(){
 
 	#check for spaces in file/directory names
 	spaces=$(ls | awk "/ /")
@@ -97,8 +85,20 @@ load_config_and_build(){
 #recursion
 
 recurse() {
+	err "load in $PWD\n"
+	#load config
+	if test -f ".config"; then #if theres no set config it'll just scope up
+		err "load config\n"
+		#if unconfigured inherit from parent config
+		local card="$(fetch_config "card" "$card")"
+		local doc_preamble="$(fetch_config "doc_preamble" "$doc_preamble")"
+		local doc_postamble="$(fetch_config "doc_postamble" "$doc_postamble")"
+		local protected="$(fetch_config "protected" "false")" #default to unprotected
+		local ignore="$(fetch_config "ignore" "$ignore")"
+		ignore=$(echo "${ignore:-^\$}" | grep -v "^$") #remove empty lines otherwise grep doesn't filter right
+	fi
 
-	load_config_and_build
+	build
 
 	err "continue to $(ls -d */ 2>/dev/null| grep -vF -- "$ignore")\n"
 	for dir in $(ls -d */ 2>/dev/null| grep -vF -- "$ignore"); do
