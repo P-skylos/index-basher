@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 
 
-db=0
+db=1
 err() {
 	if (( $db )); then
 		printf "$1" 1>&2
 		fi
 	}
 
+#accessible vars
 path_prefix=""
+now_date_time=(`date '+%Y-%m-%d %H:%M'`)
 
 
 #default config
-card_preamble=""
-card_postamble="</br>"
+card="<a class="card_link" href="{{file}}"> {{file}} </a></br>"
 doc_preamble="<!doctype html><head><title>my cool site</title></head><body>"
 doc_postamble="</body>"
 ignore="index.html"
@@ -30,21 +31,30 @@ fetch_config(){
 		echo "$2" #if the block doesnt exist give the default value provided
 	fi
 }
+
+fill_template(){ #text #pattern #replacement
+	echo "${1}" | sed -e "s/{{$2}}/$3/g" -e "s/{{\\\\$2}}/{{$2}}/g"
+}
+
+fill_body_templates(){ #1=text
+	newtext=$(fill_template "$1" "path" "${path_prefix}")
+	newtext=$(fill_template "${newtext}" "now_date" "${now_date_time[0]}")
+	fill_template "${newtext}" "now_time" "${now_date_time[1]}"
+}
+
 ###
 #HTML generation
 
 make_card(){
-	echo "${card_preamble}"
-	echo "<a class="card_link" href="${1}"> ${1} </a>"
-	echo "${card_postamble}"
+	fill_template "$(fill_body_templates "$card")" file "$1"
 }
 
 make_index(){
-	echo "$doc_preamble" > "index.html"
+	fill_body_templates "$doc_preamble" > "index.html"
 	for file in "${files[@]}"; do
 		make_card "$file" >> "index.html"
 	done
-	echo "$doc_postamble" >> "index.html"
+	fill_body_templates "$doc_postamble" >> "index.html"
 }
 
 ###
@@ -56,8 +66,7 @@ load_config_and_build(){
 	if test -f ".config"; then #if theres no set config it'll just scope up
 		err "load config\n"
 		#if unconfigured inherit from parent config
-		local card_preamble="$(fetch_config "card_preamble" "$card_preamble")"
-		local card_postamble="$(fetch_config "card_postamble" "$card_postamble")"
+		local card="$(fetch_config "card" "$card")"
 		local doc_preamble="$(fetch_config "doc_preamble" "$doc_preamble")"
 		local doc_postamble="$(fetch_config "doc_postamble" "$doc_postamble")"
 		local protected="$(fetch_config "protected" "false")" #default to unprotected
@@ -93,8 +102,9 @@ recurse() {
 
 	err "continue to $(ls -d */ 2>/dev/null| grep -vF -- "$ignore")\n"
 	for dir in $(ls -d */ 2>/dev/null| grep -vF -- "$ignore"); do
-		old_path="$path_prefix"
+		local old_path="$path_prefix"
 		path_prefix="$path_prefix$dir"
+		err "pathprefix $path_prefix"
 		cd $dir
 		err "recursing to $dir"
 		recurse
